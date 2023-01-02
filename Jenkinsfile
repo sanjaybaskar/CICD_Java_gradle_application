@@ -4,7 +4,7 @@ pipeline {
         VERSION = "${env.BUILD_ID}"
     }
     stages {
-        stage("sonar quality check"){
+        stage("Sonar code quality check"){
             steps{
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-token') {
@@ -20,6 +20,20 @@ pipeline {
                 }
             }
 	    }
+        stage("Docker build & docker push"){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'docker_pass', variable: 'docker_password')]) {
+                        sh '''
+                         docker built -t 65.2.182.139:8083/springapp:${VERSION} .    
+                        docker login -u -p $docker_password 65.2.182.139:8083
+                        docker push 65.2.182.139:8083/springapp${VERSION}
+                        docker rmi 65.2.182.139:8083/springapp${VERSION}
+                        '''
+                        }
+                }
+            }
+        }
        
     }
 
