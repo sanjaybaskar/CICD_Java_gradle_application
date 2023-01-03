@@ -34,16 +34,17 @@ pipeline {
                 }
             }
         }
-     stage("Datree configuration"){
-        steps{
-            script{
-                 dir('kubernetes/'){
-                sh 'helm datree test myapp/'
-            }
-            }
-           
-        }
+     stage('indentifying misconfigs using datree in helm charts'){
+            steps{
+                script{
 
+                    dir('kubernetes/') {
+                        withEnv(['DATREE_TOKEN=12887fca-ed2a-42f7-83ec-e38e1d8ddc3c']) {
+                              sh 'helm datree test myapp/'
+                        }
+                    }
+                }
+            }
         }
     }
 
